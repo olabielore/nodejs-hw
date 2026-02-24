@@ -1,4 +1,3 @@
-// src/server.js
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
@@ -26,29 +25,23 @@ app.use(
   }),
 );
 
-// Логування часу
-app.use((req, res, next) => {
-  console.log(`Time: ${new Date().toLocaleString()}`);
-  next();
+app.get('/notes', (req, res) => {
+  res.status(200).json({ message: 'Retrieved all notes' });
 });
 
-// Маршрут
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Hello, World!' });
+app.get('/notes/:noteId', (req, res) => {
+  const { noteId } = req.params;
+  res.status(200).json({ message: `Retrieved note with ID: ${noteId}` });
 });
 
-app.post('/users', (req, res) => {
-  console.log(req.body); // тепер тіло доступне як JS-об’єкт
-  res.status(201).json({ message: 'User created' });
-});
-
-// Маршрут для тестування middleware помилки
 app.get('/test-error', (req, res) => {
-  // Штучна помилка для прикладу
-  throw new Error('Something went wrong');
+  throw new Error('Simulated server error');
 });
 
-// Middleware для обробки помилок
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
 app.use((err, req, res, next) => {
   console.error(err);
 
